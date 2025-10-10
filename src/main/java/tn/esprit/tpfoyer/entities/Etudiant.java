@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,6 +18,7 @@ import java.util.Set;
 public class Etudiant {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEtudiant;
     private String nomEt;
