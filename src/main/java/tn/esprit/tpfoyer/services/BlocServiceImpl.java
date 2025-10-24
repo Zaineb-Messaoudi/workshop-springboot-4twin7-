@@ -1,5 +1,6 @@
 package tn.esprit.tpfoyer.services;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.repositories.BlocRepository;
@@ -7,9 +8,12 @@ import tn.esprit.tpfoyer.repositories.BlocRepository;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class BlocServiceImpl implements IBlocService{
 
+
     BlocRepository blocRepository;
+
     @Override
     public Bloc addOrUpdateBloc(Bloc bloc) {
         return blocRepository.save(bloc);
@@ -30,3 +34,4 @@ public class BlocServiceImpl implements IBlocService{
         blocRepository.deleteById(id);
     }
 }
+
