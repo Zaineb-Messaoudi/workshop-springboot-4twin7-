@@ -2,6 +2,7 @@ package tn.esprit.tpfoyer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.tpfoyer.DTO.BlocDTO;
 import tn.esprit.tpfoyer.entities.Bloc;
 import tn.esprit.tpfoyer.services.IBlocService;
 
@@ -37,4 +38,7 @@ public class BlocController {
     Bloc getBlocById(@PathVariable Long idBloc) {
         return blocService.getBlocById(idBloc);
     }
+
+    @GetMapping("/{idBloc}")
+    BlocDTO getBlocDTO(@PathVariable Long idBloc) {return blocService.getBloc(idBloc);}
 }

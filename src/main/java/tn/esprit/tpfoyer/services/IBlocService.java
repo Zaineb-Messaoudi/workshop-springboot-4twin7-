@@ -1,5 +1,6 @@
 package tn.esprit.tpfoyer.services;
 
+import tn.esprit.tpfoyer.DTO.BlocDTO;
 import tn.esprit.tpfoyer.entities.Bloc;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface IBlocService {
 
     void deleteBloc(long id);
 
+    BlocDTO getBloc(long id);
 }

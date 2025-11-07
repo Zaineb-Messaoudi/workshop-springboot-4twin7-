@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -25,7 +25,7 @@ public class Etudiant {
     private String prenomEt;
     private Long cin;
     private String ecole;
-    private Date dateNaissance;
+    private LocalDate dateNaissance;
 
     @ManyToMany(mappedBy="etudiants", cascade = CascadeType.ALL)
      Set<Reservation> reservations;
