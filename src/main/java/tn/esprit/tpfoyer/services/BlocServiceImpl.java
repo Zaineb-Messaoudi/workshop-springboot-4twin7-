@@ -15,9 +15,8 @@ import java.util.List;
 public class BlocServiceImpl implements IBlocService{
 
 
-    BlocRepository blocRepository;
-
-    BlocMapper mapper;
+    final BlocRepository blocRepository;
+    final BlocMapper mapper;
 
     @Override
     public Bloc addOrUpdateBloc(Bloc bloc) {

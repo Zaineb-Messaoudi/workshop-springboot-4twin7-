@@ -3,10 +3,11 @@ package tn.esprit.tpfoyer.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.tpfoyer.entities.Chambre;
+import tn.esprit.tpfoyer.entities.Reservation;
 import tn.esprit.tpfoyer.services.IChambreService;
 
 import java.util.List;
-import java.util.function.LongFunction;
+
 
 @RestController
 @RequestMapping("/chambrecontroller")
@@ -38,4 +39,6 @@ public class ChambreController {
     Chambre findChambreById(@PathVariable Long idChambre) {
         return chambreService.findById(idChambre);
     }
+
+
 }

@@ -9,4 +9,7 @@ public interface IFoyerService {
     List<Foyer> findAll();
     Foyer findById(Long id);
     void deleteFoyer(Long id);
+    Foyer addBlocetFoyerAssocie (Foyer foyer);
+    void assignBlocToFoyer(Long idFoyer, Long idBloc);
+    void unassignBlocFromFoyer(Long idBloc);
 }

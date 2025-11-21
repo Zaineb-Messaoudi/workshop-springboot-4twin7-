@@ -29,12 +29,30 @@ public class FoyerController {
     }
 
     @GetMapping("/findallfoyer")
-    List<Foyer> findAllFoyer() {
-        return foyerService.findAll();
-    }
+    List<Foyer> findAllFoyer() { return foyerService.findAll(); }
 
     @GetMapping("/getfoyerbyid/{idFoyer}")
     Foyer getFoyerById(@PathVariable Long idFoyer) {
         return foyerService.findById(idFoyer);
     }
+
+    @PostMapping("/addFoyeretBloc")
+    Foyer addFoyeretBlocAssocie(@RequestBody Foyer foyer) {
+        Foyer f = foyerService.addBlocetFoyerAssocie(foyer);
+        return f;
+    }
+
+    @PutMapping("/assignBlocToFoyer/{idBloc}/{idFoyer}")
+    @ResponseBody
+    void assignBlocToFoyer(@PathVariable Long idBloc, @PathVariable Long idFoyer) {
+        // Correct order: Foyer first, Bloc second
+        foyerService.assignBlocToFoyer(idFoyer, idBloc);
+    }
+
+    @PutMapping("/unassignBlocFromFoyer/{idBloc}")
+    @ResponseBody
+    void unassignBlocFromFoyer(@PathVariable Long idBloc) {
+        foyerService.unassignBlocFromFoyer(idBloc);
+    }
+
 }

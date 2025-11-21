@@ -17,14 +17,18 @@ public class Bloc {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_bloc")
     private Long idBloc;
+
+    @Column(name = "nom_bloc")
     private String nomBloc;
+
+    @Column(name = "capacite_bloc")
     private Long capaciteBloc;
 
     @ManyToOne
-    Foyer foyer;
+    private Foyer foyer;
 
-    @OneToMany( mappedBy="bloc")
-     Set<Chambre> chambres;
-
+    @OneToMany(mappedBy="bloc")
+    private Set<Chambre> chambres;
 }

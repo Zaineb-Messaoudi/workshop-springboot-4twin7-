@@ -1,5 +1,6 @@
 package tn.esprit.tpfoyer.services;
 
+import tn.esprit.tpfoyer.entities.Chambre;
 import tn.esprit.tpfoyer.entities.Foyer;
 import tn.esprit.tpfoyer.entities.Reservation;
 
@@ -10,5 +11,8 @@ public interface IReservationService {
     List<Reservation> findAll();
     void deleteReservation(String id);
     Reservation addOrUpdateReservation(Reservation reservation);
+    Chambre createChambreWithReservation(Chambre chambre, Reservation reservation);
+    Chambre assignChambre(Long chambreId, String reservationId);
+    Chambre unassignChambre(Long chambreId, String reservationId);
 
 }

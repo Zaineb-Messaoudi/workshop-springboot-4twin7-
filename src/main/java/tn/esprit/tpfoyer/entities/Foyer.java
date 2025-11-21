@@ -18,13 +18,19 @@ public class Foyer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_foyer")
     private Long idFoyer;
+
+    @Column(name = "nom_foyer")
     private String nomFoyer;
+
+    @Column(name = "capacite_foyer")
     private Long capaciteFoyer;
 
-    @OneToMany(mappedBy="foyer")
-     Set<Bloc> bloc;
+    @OneToMany(mappedBy="foyer", cascade=CascadeType.ALL)
+    private Set<Bloc> blocs;
 
     @OneToOne(mappedBy = "foyer")
-     Universite universite;
+    private Universite universite;
 }
+

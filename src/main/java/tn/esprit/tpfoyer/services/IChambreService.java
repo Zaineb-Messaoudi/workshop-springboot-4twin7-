@@ -1,6 +1,7 @@
 package tn.esprit.tpfoyer.services;
 
 import tn.esprit.tpfoyer.entities.Chambre;
+import tn.esprit.tpfoyer.entities.Reservation;
 
 import java.util.List;
 

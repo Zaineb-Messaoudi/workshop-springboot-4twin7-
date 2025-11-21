@@ -2,7 +2,10 @@ package tn.esprit.tpfoyer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.tpfoyer.DTO.ChambreReservationDTO;
+import tn.esprit.tpfoyer.entities.Chambre;
 import tn.esprit.tpfoyer.entities.Reservation;
+import tn.esprit.tpfoyer.services.IChambreService;
 import tn.esprit.tpfoyer.services.IReservationService;
 
 import java.util.List;
@@ -12,6 +15,9 @@ import java.util.List;
 public class ReservationController {
     @Autowired
     IReservationService reservationService;
+
+    @Autowired
+    IChambreService chambreService;
 
     @PostMapping("/addReservation")
     Reservation addReservation(@RequestBody Reservation reservation) {
@@ -37,4 +43,22 @@ public class ReservationController {
     Reservation getReservationById(@PathVariable String idReservation) {
         return reservationService.findById(idReservation);
     }
+
+    @PostMapping("/createChambreWithReservation")
+    public Chambre createChambreWithReservation(@RequestBody ChambreReservationDTO dto) {
+        return reservationService.createChambreWithReservation(dto.getChambre(), dto.getReservation());
+    }
+
+    @PutMapping("/assignChambre/{idChambre}/{idReservation}")
+    public Chambre assignChambre(@PathVariable Long idChambre,
+                                  @PathVariable String idReservation) {
+        return reservationService.assignChambre(idChambre, idReservation);
+    }
+
+    @PutMapping("/unassignChambre/{idChambre}/{idReservation}")
+    public Chambre unassignChambre(@PathVariable Long idChambre,
+                                     @PathVariable String idReservation) {
+        return reservationService.unassignChambre(idChambre, idReservation);
+    }
+
 }
