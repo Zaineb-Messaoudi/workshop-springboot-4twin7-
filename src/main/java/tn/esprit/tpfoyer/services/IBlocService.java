@@ -16,4 +16,12 @@ public interface IBlocService {
     void deleteBloc(long id);
 
     BlocDTO getBloc(long id);
+
+    List<Bloc> getBlocsNonAffectes();
+
+    List<Bloc> getBlocsCapaciteGT30();
+
+    List<Bloc> getBlocsNomStartsWithA();
+
+    List<Bloc> getBlocsNomStartsWithAAndCapaciteGT30();
 }

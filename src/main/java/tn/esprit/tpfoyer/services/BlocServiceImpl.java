@@ -1,7 +1,6 @@
 package tn.esprit.tpfoyer.services;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.DTO.BlocDTO;
 import tn.esprit.tpfoyer.DTO.BlocMapper;
@@ -43,5 +42,26 @@ public class BlocServiceImpl implements IBlocService{
         Bloc bloc = blocRepository.findById(id).orElseThrow(null);
         return mapper.toDTO(bloc);
     }
+
+    @Override
+    public List<Bloc> getBlocsNonAffectes() {
+        return blocRepository.findByFoyerIsNull();
+    }
+
+    @Override
+    public List<Bloc> getBlocsCapaciteGT30() {
+        return blocRepository.findByCapaciteBlocGreaterThan(30L);
+    }
+
+    @Override
+    public List<Bloc> getBlocsNomStartsWithA() {
+        return blocRepository.findByNomBlocStartingWith("A");
+    }
+
+    @Override
+    public List<Bloc> getBlocsNomStartsWithAAndCapaciteGT30() {
+        return blocRepository.findByNomBlocStartingWithAndCapaciteBlocGreaterThan("A", 30L);
+    }
+
 }
 

@@ -1,7 +1,7 @@
 package tn.esprit.tpfoyer.services;
 
 import tn.esprit.tpfoyer.entities.Chambre;
-import tn.esprit.tpfoyer.entities.Reservation;
+import tn.esprit.tpfoyer.entities.TypeChambre;
 
 import java.util.List;
 
@@ -11,4 +11,6 @@ public interface IChambreService {
     List<Chambre> findAll();
     Chambre addOrUpdateChambre(Chambre chambre);
     void deleteChambre(long id);
+    List<Chambre> findByType(TypeChambre type);
+    Chambre findByNumero(Long numero);
 }

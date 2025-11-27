@@ -41,4 +41,25 @@ public class BlocController {
 
     @GetMapping("/{idBloc}")
     BlocDTO getBlocDTO(@PathVariable Long idBloc) {return blocService.getBloc(idBloc);}
+
+    @GetMapping("/nonAffectes")
+    public List<Bloc> getBlocsNonAffectes() {
+        return blocService.getBlocsNonAffectes();
+    }
+
+    @GetMapping("/capaciteSup30")
+    public List<Bloc> getBlocsCapaciteSup30() {
+        return blocService.getBlocsCapaciteGT30();
+    }
+
+    @GetMapping("/nomStartsA")
+    public List<Bloc> getBlocsNomStartsWithA() {
+        return blocService.getBlocsNomStartsWithA();
+    }
+
+    @GetMapping("/nomStartsA-capaciteSup30")
+    public List<Bloc> getBlocsNomStartsWithAAndCapaciteSup30() {
+        return blocService.getBlocsNomStartsWithAAndCapaciteGT30();
+    }
+
 }
