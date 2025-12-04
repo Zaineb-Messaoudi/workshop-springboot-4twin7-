@@ -13,4 +13,5 @@ public interface IChambreService {
     void deleteChambre(long id);
     List<Chambre> findByType(TypeChambre type);
     Chambre findByNumero(Long numero);
+    Chambre findChambreByEtudiantCin(Long cin);
 }

@@ -1,5 +1,6 @@
 package tn.esprit.tpfoyer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class Chambre {
     @Enumerated(EnumType.STRING)
     private TypeChambre typeC;
 
+    @JsonIgnore
     @ManyToOne
     Bloc bloc;
 

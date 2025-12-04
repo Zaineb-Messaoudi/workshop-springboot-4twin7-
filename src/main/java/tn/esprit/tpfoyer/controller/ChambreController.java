@@ -50,6 +50,10 @@ public class ChambreController {
         return chambreService.findByNumero(numero);
     }
 
+    @GetMapping("/byEtudiantCin/{cin}")
+    public Chambre findChambreByEtudiantCin(@PathVariable Long cin) {
+        return chambreService.findChambreByEtudiantCin(cin);
+    }
 
 
 }

@@ -1,6 +1,7 @@
 package tn.esprit.tpfoyer.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class Etudiant {
     private String ecole;
     private LocalDate dateNaissance;
 
+    @JsonIgnore
     @ManyToMany(mappedBy="etudiants", cascade = CascadeType.ALL)
      Set<Reservation> reservations;
-//(
 }

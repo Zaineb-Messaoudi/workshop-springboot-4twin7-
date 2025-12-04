@@ -48,6 +48,10 @@ public class ChambreServiceImpl implements IChambreService{
         return chambreRepository.findByNumeroChambre(numero);
     }
 
+    @Override
+    public Chambre findChambreByEtudiantCin(Long cin) {
+        return chambreRepository.findChambreByEtudiantCin(cin);
+    }
 
 
 }
