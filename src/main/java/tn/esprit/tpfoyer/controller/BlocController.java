@@ -30,7 +30,7 @@ public class BlocController {
     }
 
     @GetMapping("/findallbloc")
-    List<Bloc> findAllBloc() {
+    List<Bloc> findAllBloc() throws InterruptedException {
         return blocService.getAllBlocs();
     }
 

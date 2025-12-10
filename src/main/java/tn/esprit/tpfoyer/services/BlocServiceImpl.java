@@ -1,6 +1,9 @@
 package tn.esprit.tpfoyer.services;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.DTO.BlocDTO;
 import tn.esprit.tpfoyer.DTO.BlocMapper;
@@ -11,6 +14,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class BlocServiceImpl implements IBlocService{
 
 
@@ -28,8 +32,16 @@ public class BlocServiceImpl implements IBlocService{
     }
 
     @Override
-    public List<Bloc> getAllBlocs() {
-        return blocRepository.findAll();
+    @Transactional
+    @Scheduled(fixedDelay = 10000)
+    public List<Bloc> getAllBlocs() throws InterruptedException{
+        List<Bloc> blocs = blocRepository.findAll();
+        Thread.sleep(5000);
+        for (Bloc bloc:blocs) {
+            System.out.println(bloc);
+            log.info("bloc : "+bloc);
+        }
+        return blocs;
     }
 
     @Override

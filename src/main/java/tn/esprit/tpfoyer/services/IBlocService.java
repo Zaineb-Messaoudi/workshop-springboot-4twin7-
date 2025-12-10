@@ -11,7 +11,7 @@ public interface IBlocService {
 
     Bloc getBlocById(long id);
 
-    List<Bloc> getAllBlocs();
+    List<Bloc> getAllBlocs() throws InterruptedException;
 
     void deleteBloc(long id);
 
