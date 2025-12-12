@@ -40,3 +40,229 @@
 | `MaxUploadSizeExceededException`                 | File too big (multipart)                                        | Global handler → 413 Payload Too Large + clear message                                                         |
 | `AuthenticationServiceException`                 | Problem inside your AuthenticationProvider                      | Usually 500 – log and investigate                                                                              |
 | `LockedException`                                | Account locked (too many failed logins)                         | Return 423 Locked or 401 with specific message                                                                  |
+
+
+# Spring Scheduler & Spring AOP – README Complet en Français  
+# Spring Scheduler + Spring AOP – Guide Complet & Bonnes Pratiques (en français)
+README indispensable pour tout projet Spring Boot qui utilise des tâches planifiées ou de l’AOP.
+
+## 1. Spring Scheduler (@Scheduled)
+
+### Activer le scheduling (une seule fois dans l’application)
+@SpringBootApplication
+@EnableScheduling                   // Obligatoire !
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+
+### Exemples classiques
+
+@Component
+@Slf4j
+public class TachesPlanifiees {
+
+    // Toutes les 5 secondes après la fin de la tâche précédente
+    @Scheduled(fixedDelay = 5000)
+    // @Scheduled(fixedDelayString = "${app.delay}") // depuis application.yml
+    public void toutesLes5Secondes() {
+        log.info("Tâche fixedDelay exécutée à {}", LocalDateTime.now());
+    }
+
+    // Toutes les 10 secondes, même si la précédente n’est pas terminée (risque de chevauchement)
+    @Scheduled(fixedRate = 10000)
+    public void toutesLes10SecondesFixedRate() {
+        log.info("Tâche fixedRate – attention au chevauchement si longue !");
+    }
+
+    // Expression cron – tous les jours à 2h00 du matin
+    @Scheduled(cron = "0 0 2 * * *")
+    // @Scheduled(cron = "${cron.nettoyage}") // externalisé
+    public void nettoyageQuotidien() {
+        // ton code
+    }
+
+    // Démarrer 10 secondes après le démarrage, puis toutes les 30 secondes
+    @Scheduled(fixedRate = 30000, initialDelay = 10000)
+    public void avecDelaiInitial() { }
+}
+
+
+### Expressions cron les plus utiles (à garder sous la main)
+
+| Objectif                             | Expression cron            | Signification                                   |
+|--------------------------------------|----------------------------|-------------------------------------------------|
+| Toutes les minutes                   | `0 * * * * *`              | À la seconde 0 de chaque minute                 |
+| Toutes les 5 minutes                 | `0 */5 * * * *`            | 00:00, 00:05, 00:10…                            |
+| Tous les jours à 3h30                | `0 30 3 * * *`             | Nettoyage nocturne                              |
+| Tous les lundis à 9h00               | `0 0 9 ? * MON`            | Réunion hebdo                                   |
+| Tous les jours ouvrés à 18h00        | `0 0 18 ? * MON-FRI`       | Fin de journée                                  |
+| Dernier jour du mois à minuit        | `0 0 0 L * *`              | Clôture mensuelle                               |
+| Toutes les 10 secondes               | `*/10 * * * * *`           | Pour les tests uniquement                       |
+
+### Configuration avancée (niveau PRO)
+
+# application-prod.yml
+app:
+  scheduler:
+    rapport-enabled: true
+    rapport-delay-ms: 120000     # 2 minutes
+    nettoyage-cron: "0 0 4 * * *" # tous les jours à 4h
+
+
+@Scheduled(fixedDelayString = "${app.scheduler.rapport-delay-ms}")
+@ConditionalOnProperty(name = "app.scheduler.rapport-enabled", havingValue = "true")
+public void rapportDynamique() { }
+
+@Scheduled(cron = "${app.scheduler.nettoyage-cron}")
+public void nettoyage() { }
+
+
+### Rendre @Scheduled asynchrone (fortement recommandé !)
+
+Par défaut, les tâches bloquent le démarrage et s’exécutent dans le même thread.
+
+
+@Configuration
+@EnableScheduling
+@EnableAsync
+public class ConfigScheduler implements SchedulingConfigurer {
+
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar registrar) {
+        registrar.setScheduler(poolScheduler());
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public TaskScheduler poolScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(15);
+        scheduler.setThreadNamePrefix("sched-");
+        scheduler.setErrorHandler(e -> log.error("Erreur tâche planifiée", e));
+        return scheduler;
+    }
+}
+
+
+### Arrêt propre de l’application (ne plus perdre de tâches en cours)
+spring:
+  task:
+    scheduling:
+      shutdown:
+        await-termination: true
+        await-termination-period: 30s
+
+
+## 2. Spring AOP – Guide pratique 2025
+
+### Activer AOP (généralement automatique dans Spring Boot)
+@SpringBootApplication
+// @EnableAspectJAutoProxy pas nécessaire en Spring Boot 3+
+public class Application { }
+
+
+### Les 5 annotations AOP à connaître absolument
+
+| Annotation         | Quand elle s’exécute                  | Cas d’usage classique                                 |
+|--------------------|---------------------------------------|-------------------------------------------------------|
+| `@Before`          | Avant la méthode cible                | Log, contrôle de sécurité                             |
+| `@AfterReturning`  | Après un retour réussi                | Audit, transformation de réponse                      |
+| `@AfterThrowing`   | Quand une exception est levée         | Log centralisé des erreurs                            |
+| `@After`           | Toujours (finally)                    | Nettoyage de ressources                               |
+| `@Around`          | Autour de tout (la plus puissante)    | Métriques, cache, retry, transactions manuelles      |
+
+### Exemple concret : Métriques + Logging + Gestion d’erreurs
+
+@Aspect
+@Component
+@Slf4j
+@RequiredArgsConstructor
+public class MonitoringAspect {
+
+    private final MeterRegistry meterRegistry;
+
+    @Around("@annotation(org.springframework.web.bind.annotation.GetMapping) || " +
+            "@annotation(org.springframework.web.bind.annotation.PostMapping)")
+    public Object monitoriserEndpoint(ProceedingJoinPoint pjp) throws Throwable {
+        String nom = pjp.getSignature().toShortString();
+        Timer.Sample sample = Timer.start(meterRegistry);
+
+        try {
+            Object resultat = pjp.proceed();
+            sample.stop(meterRegistry.timer("http.requests", "endpoint", nom, "status", "200"));
+            return resultat;
+        } catch (Exception ex) {
+            sample.stop(meterRegistry.timer("http.requests", "endpoint", nom, "status", "500"));
+            log.error("Erreur dans {} : {}", nom, ex.toString());
+            throw ex;
+        }
+    }
+}
+
+
+### Créer sa propre annotation + AOP (méthode propre)
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface AvecLog {
+    String valeur() default "";
+}
+
+@Aspect
+@Component
+@Slf4j
+public class LogAspect {
+
+    @Around("@annotation(avecLog)")
+    public Object loguer(ProceedingJoinPoint pjp, AvecLog avecLog) throws Throwable {
+        String message = StringUtils.hasText(avecLog.valeur()) ? avecLog.valeur() : pjp.getSignature().toShortString();
+        log.info("Début → {}", message);
+        long debut = System.currentTimeMillis();
+
+        try {
+            Object resultat = pjp.proceed();
+            log.info("Fin {} → {} ms", message, System.currentTimeMillis() - debut);
+            return resultat;
+        } catch (Exception e) {
+            log.error("Échec {} → {} ms", message, System.currentTimeMillis() - debut, e);
+            throw e;
+        }
+    }
+}
+
+### Pointcuts réutilisables (propreté maximale)
+
+@Aspect
+@Component
+public class Pointcuts {
+
+    @Pointcut("within(@org.springframework.stereotype.Service *)")
+    public void coucheService() {}
+
+    @Pointcut("within(@org.springframework.web.bind.annotation.RestController *)")
+    public void coucheController() {}
+
+    @Pointcut("execution(* com.monprojet..repository.*.*(..))")
+    public void coucheRepository() {}
+}
+
+// Utilisation
+@Around("Pointcuts.coucheService() && @annotation(Auditable)")
+public void auditer(...)
+
+## Checklist à cocher à chaque nouveau projet
+
+- Toujours un ThreadPoolTaskScheduler personnalisé  
+- Toutes les expressions cron externalisées  
+- `@Async` + `@Scheduled` combinés  
+- Arrêt propre configuré  
+- Jamais d’aspect lourd sur les repositories  
+- `@Around` privilégié pour cache/métriques  
+- Jamais d’exception avalée dans un aspect  
+- Logs au bon niveau (DEBUG entrée/sortie, ERROR exception)  
+- Correlation ID transmis dans les aspects si besoin  
+
+
+Tu peux maintenant coller ce README directement dans ton projet. Tout est en français clair, à jour 2025 et prêt pour la production !
+`
